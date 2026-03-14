@@ -1,0 +1,13 @@
+batch_size: 4
+learning_rate: 0.0001
+epochs: 50
+optimizer: "adamw"
+scheduler: "cosine"
+dataset_path: "dataset/Offroad_Segmentation_Training_Dataset/Offroad_Segmentation_Training_Dataset" # Path to the dataset folder
+num_classes: 10
+num_workers: 0
+device: "cuda"
+
+# Additional settings
+image_size: [512, 512]
+weight_decay: 0.01
