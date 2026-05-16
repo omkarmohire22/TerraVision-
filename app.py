@@ -10,6 +10,7 @@ import torch.nn.functional as F
 from fastapi import FastAPI, File, UploadFile
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import torchvision.transforms as transforms
 from src.terravision.visualization.visualize_predictions import decode_segmap
@@ -44,6 +45,15 @@ mimetypes.add_type('application/javascript', '.js')
 
 app = FastAPI(title="Offroad Segmentation AI")
 
+# Add CORS middleware to allow cross-origin requests from Vercel frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (update with your Vercel URL in production)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 # Mount the static frontend
 app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
@@ -72,9 +82,16 @@ def load_model():
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    # Load local DINOv2
-    repo_dir = os.path.abspath("dinov2")
-    backbone = torch.hub.load(repo_or_dir=repo_dir, source='local', model='dinov2_vits14')
+    # Load DINOv2 (try local first, fallback to github for deployment)
+    try:
+        repo_dir = os.path.abspath("dinov2")
+        if not os.path.exists(repo_dir):
+            raise FileNotFoundError("Local dinov2 not found")
+        backbone = torch.hub.load(repo_or_dir=repo_dir, source='local', model='dinov2_vits14')
+    except Exception as e:
+        print(f"Loading from GitHub: {e}")
+        backbone = torch.hub.load(repo_or_dir='facebookresearch/dinov2', source='github', model='dinov2_vits14')
+    
     backbone.to(device)
     backbone.eval()
 
@@ -83,6 +100,8 @@ def load_model():
     if os.path.exists(weights_path):
         classifier.load_state_dict(torch.load(weights_path, map_location=device))
         print(f"SUCCESS: Loaded weights from {weights_path}")
+    else:
+        print(f"WARNING: Weights not found at {weights_path}. Model will use random weights.")
     
     classifier.to(device)
     classifier.eval()

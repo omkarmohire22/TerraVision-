@@ -1,3 +1,6 @@
+// Define the backend API URL. For local development use '', for production use your deployed backend URL.
+const API_BASE_URL = ''; // e.g., 'https://terravision-backend.onrender.com'
+
 document.addEventListener('DOMContentLoaded', () => {
     const fileElem = document.getElementById('fileElem');
     const uploadBtn = document.querySelector('.upload-btn');
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function uploadFile(file) {
-        const url = '/segment';
+        const url = `${API_BASE_URL}/segment`;
         const formData = new FormData();
         formData.append('file', file);
 
