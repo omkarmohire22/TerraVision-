@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 import uvicorn
 import torchvision.transforms as transforms
-from visualization.visualize_predictions import decode_segmap
+from src.terravision.visualization.visualize_predictions import decode_segmap
 
 # --- DINOv2 Model Definition (Matches our 10-epoch training) ---
 class SegmentationHeadConvNeXt(nn.Module):
@@ -37,6 +37,10 @@ class SegmentationHeadConvNeXt(nn.Module):
         x = self.stem(x)
         x = self.block(x)
         return self.classifier(x)
+
+import mimetypes
+mimetypes.add_type('text/css', '.css')
+mimetypes.add_type('application/javascript', '.js')
 
 app = FastAPI(title="Offroad Segmentation AI")
 

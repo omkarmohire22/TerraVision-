@@ -1,103 +1,65 @@
-const dropArea = document.getElementById('drop-area');
-const fileInput = document.getElementById('fileElem');
-const uploadForm = document.getElementById('upload-form');
-const loader = document.getElementById('loader');
-const resultsArea = document.getElementById('results-area');
-const origImg = document.getElementById('orig-img');
-const predImg = document.getElementById('pred-img');
+document.addEventListener('DOMContentLoaded', () => {
+    const fileElem = document.getElementById('fileElem');
+    const uploadBtn = document.querySelector('.upload-btn');
+    const resultContainer = document.getElementById('result-container');
+    const origImg = document.getElementById('orig-img');
+    const predImg = document.getElementById('pred-img');
+    
+    // Simulate initial panel open
+    setTimeout(() => {
+        document.querySelector('.left-panel').style.transform = 'translateX(0)';
+        setTimeout(() => {
+            document.querySelector('.left-panel').style.transform = '';
+        }, 3000);
+    }, 1000);
 
-// Prevent default drag behaviors
-;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, preventDefaults, false)
-    document.body.addEventListener(eventName, preventDefaults, false)
-})
+    fileElem.addEventListener('change', handleFiles, false);
 
-function preventDefaults(e) {
-    e.preventDefault()
-    e.stopPropagation()
-}
-
-// Highlight drop area when item is dragged over it
-;['dragenter', 'dragover'].forEach(eventName => {
-    dropArea.addEventListener(eventName, highlight, false)
-})
-
-    ;['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false)
-    })
-
-function highlight(e) {
-    dropArea.classList.add('highlight')
-}
-
-function unhighlight(e) {
-    dropArea.classList.remove('highlight')
-}
-
-// Handle dropped files
-dropArea.addEventListener('drop', handleDrop, false)
-
-function handleDrop(e) {
-    let dt = e.dataTransfer
-    let files = dt.files
-    handleFiles(files)
-}
-
-// Handle file input click
-fileInput.addEventListener('change', function () {
-    handleFiles(this.files);
-});
-
-function handleFiles(files) {
-    if (files.length > 0) {
-        uploadFile(files[0]);
+    function handleFiles(e) {
+        const files = this.files;
+        if (files.length) {
+            uploadFile(files[0]);
+        }
     }
-}
 
-function uploadFile(file) {
-    // Hide upload form and show loader
-    uploadForm.classList.add('hidden');
-    loader.classList.remove('hidden');
-    resultsArea.classList.add('hidden');
+    function uploadFile(file) {
+        const url = '/segment';
+        const formData = new FormData();
+        formData.append('file', file);
 
-    let url = '/segment';
-    let formData = new FormData();
-    formData.append('file', file);
+        uploadBtn.innerText = 'TRANSMITTING...';
+        uploadBtn.style.background = 'var(--amber)';
+        uploadBtn.style.color = '#000';
+        uploadBtn.style.borderColor = 'var(--amber)';
+        uploadBtn.style.boxShadow = '0 0 15px var(--amber)';
 
-    fetch(url, {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
+        fetch(url, {
+            method: 'POST',
+            body: formData
         })
+        .then(response => response.json())
         .then(data => {
-            if (data.error) {
-                alert('Error: ' + data.error);
-                resetUI();
-                return;
-            }
+            uploadBtn.innerText = 'TRANSMIT IMAGE';
+            uploadBtn.style = '';
 
-            // Update Images
+            resultContainer.classList.remove('hidden');
             origImg.src = data.original_image;
             predImg.src = data.segmented_image;
 
-            // Hide loader and show results & form
-            loader.classList.add('hidden');
-            uploadForm.classList.remove('hidden');
-            resultsArea.classList.remove('hidden');
+            // Open right panel to show results
+            document.querySelector('.right-panel').style.transform = 'translateX(0)';
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('There was an error processing your image.');
-            resetUI();
+        .catch(() => {
+            uploadBtn.innerText = 'TRANSMISSION FAILED';
+            uploadBtn.style.background = 'var(--red)';
+            uploadBtn.style.color = '#fff';
+            uploadBtn.style.borderColor = 'var(--red)';
+            uploadBtn.style.boxShadow = '0 0 15px var(--red)';
+            
+            setTimeout(() => {
+                uploadBtn.innerText = 'TRANSMIT IMAGE';
+                uploadBtn.style = '';
+            }, 3000);
         });
-}
-
-function resetUI() {
-    loader.classList.add('hidden');
-    uploadForm.classList.remove('hidden');
-}
+    }
+});

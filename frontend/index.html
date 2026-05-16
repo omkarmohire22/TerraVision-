@@ -3,78 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duality AI - Offroad Semantic Segmentation</title>
-    <!-- Modern Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>TerraVision HUD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header Section -->
-        <header class="header">
-            <div class="logo-container">
-                <div class="icon"></div>
-                <h1>Duality AI Segmentation</h1>
+    <!-- Background System -->
+    <div class="bg-system">
+        <div class="bg-desert"></div>
+        <div class="bg-wireframe"></div>
+        <div class="scanline"></div>
+        <div class="vignette"></div>
+    </div>
+
+    <!-- HUD Layout -->
+    <div class="hud-container">
+        
+        <!-- Top Nav -->
+        <header class="hud-header">
+            <div class="brand">
+                <h1>TERRAVISION</h1>
+                <div class="status">
+                    <span class="dot pulse"></span>
+                    <span class="status-text">LIVE INFERENCE</span>
+                </div>
             </div>
-            <p class="subtitle">Pixel-perfect offroad scene understanding powered by DeepLabV3+</p>
+            <div class="controls">
+                <button class="active">DINOv2</button>
+                <button>DeepLabV3+</button>
+                <button>DUALITY AI</button>
+            </div>
         </header>
 
-        <!-- Main Workspace -->
-        <main class="workspace">
-            <!-- Upload Section -->
-            <section class="upload-section" id="drop-area">
-                <form id="upload-form" class="upload-form">
-                    <input type="file" id="fileElem" accept="image/*" class="file-input" hidden>
-                    <label class="upload-btn" for="fileElem">
-                        <div class="upload-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+        <!-- Center Stage (Rover & Orbit) -->
+        <main class="center-stage">
+            <div class="pedestal-system">
+                <div class="orbit-container">
+                    <!-- Orbiting Data Cards -->
+                    <div class="orbit-card" style="--delay: 0s;">
+                        <div class="card-content glassmorphism">
+                            <div class="label">DETECTED TERRAIN</div>
+                            <div class="tags">
+                                <span class="tag amber">DRY GRASS</span>
+                                <span class="tag red">ROCKS</span>
+                            </div>
                         </div>
-                        <span id="upload-text">Drag & Drop an image or click to browse</span>
-                    </label>
-                </form>
-                
-                <div class="loader-container hidden" id="loader">
-                    <div class="spinner"></div>
-                    <p>Analyzing Terrain...</p>
-                </div>
-            </section>
-
-            <!-- Results Section -->
-            <section class="results-section hidden" id="results-area">
-                <div class="image-card">
-                    <h3>Input Image</h3>
-                    <div class="img-wrapper">
-                        <img id="orig-img" src="" alt="Original Uploaded Image">
+                    </div>
+                    <div class="orbit-card" style="--delay: -5s;">
+                        <div class="card-content glassmorphism hazard">
+                            <div class="label">HAZARD ALERT</div>
+                            <div class="alert-item">
+                                <span class="dot red"></span> LOG <span class="dist">4.2m AHEAD</span>
+                            </div>
+                            <div class="alert-item">
+                                <span class="dot amber"></span> CLUTTER <span class="dist">7.8m LEFT</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="image-card glow-card">
-                    <h3>Semantic Segmentation</h3>
-                    <div class="img-wrapper">
-                        <img id="pred-img" src="" alt="Predicted Segmentation Mask">
+                <!-- Rover Hologram -->
+                <div class="rover-wrapper">
+                    <div class="rover">
+                        <div class="rover-chassis"></div>
+                        <div class="rover-cockpit"></div>
+                        <div class="repulsor fl"></div>
+                        <div class="repulsor fr"></div>
+                        <div class="repulsor bl"></div>
+                        <div class="repulsor br"></div>
+                        <div class="scanner-sweep"></div>
                     </div>
+                    <div class="shimmer-effect"></div>
+                    <div class="floor-shadow"></div>
                 </div>
-            </section>
+            </div>
         </main>
-        
-        <!-- Legend Section -->
-        <footer class="legend">
-            <h3>Class Legend</h3>
-            <div class="legend-grid">
-                <div class="legend-item"><div class="color-box" style="background: rgb(0, 128, 0);"></div> Trees</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(0, 255, 0);"></div> Lush Bushes</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(128, 128, 0);"></div> Dry Grass</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(165, 42, 42);"></div> Dry Bushes</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(210, 180, 140);"></div> Ground Clutter</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(255, 192, 203);"></div> Flowers</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(139, 69, 19);"></div> Logs</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(128, 128, 128);"></div> Rocks</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(244, 164, 96);"></div> Landscape</div>
-                <div class="legend-item"><div class="color-box" style="background: rgb(135, 206, 235);"></div> Sky</div>
+
+        <!-- Left Panel: Metrics -->
+        <aside class="side-panel left-panel">
+            <div class="panel-trigger"></div>
+            <div class="panel-content glassmorphism">
+                <div class="metric-card">
+                    <div class="label">MEAN IoU</div>
+                    <div class="value teal">78.9<span class="unit">%</span></div>
+                    <div class="sub">↑ +2.1 vs baseline</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">DICE SCORE</div>
+                    <div class="value amber">0.821</div>
+                    <div class="sub">10-class avg</div>
+                </div>
+                <div class="metric-card">
+                    <div class="label">PIXEL ACC</div>
+                    <div class="value blue">91.7<span class="unit">%</span></div>
+                    <div class="sub">val set · 512×512</div>
+                </div>
+                
+                <!-- Actual Upload Integration -->
+                <div class="upload-module">
+                    <div class="label">TELEMETRY UPLOAD</div>
+                    <form id="upload-form">
+                        <input type="file" id="fileElem" accept="image/*" hidden>
+                        <label for="fileElem" class="upload-btn">TRANSMIT IMAGE</label>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Panel: Inference Results & Confidence -->
+        <aside class="side-panel right-panel">
+            <div class="panel-trigger"></div>
+            <div class="panel-content glassmorphism">
+                <div class="confidence-card">
+                    <div class="label">CLASS CONFIDENCE</div>
+                    <div class="bar-chart">
+                        <div class="bar-row"><span>Landscape</span><div class="bar-track"><div class="bar-fill" style="width:88%; background:var(--teal)"></div></div><span class="pct">88%</span></div>
+                        <div class="bar-row"><span>Rocks</span><div class="bar-track"><div class="bar-fill" style="width:74%; background:var(--amber)"></div></div><span class="pct">74%</span></div>
+                        <div class="bar-row"><span>Dry Grass</span><div class="bar-track"><div class="bar-fill" style="width:81%; background:var(--green)"></div></div><span class="pct">81%</span></div>
+                        <div class="bar-row"><span>Sky</span><div class="bar-track"><div class="bar-fill" style="width:95%; background:var(--blue)"></div></div><span class="pct">95%</span></div>
+                    </div>
+                </div>
+
+                <div class="inference-visualizer hidden" id="result-container">
+                    <div class="label">LATEST TRANSMISSION</div>
+                    <div class="images">
+                        <img id="orig-img" src="" alt="Raw">
+                        <img id="pred-img" src="" alt="Segmented">
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Bottom Legend / Status Footer -->
+        <footer class="hud-footer glassmorphism">
+            <div class="ticker">
+                > SYSTEM: 91.7% · HAZARDS DETECTED: LOG@4.2m, CLUTTER@7.8m · TERRAIN: ARID DESERT · STATUS: NOMINAL
+            </div>
+            <div class="legend-pills">
+                <span class="pill" style="--c: #008000">TREES</span>
+                <span class="pill" style="--c: #00ff00">LUSH BUSHES</span>
+                <span class="pill" style="--c: #808000">DRY GRASS</span>
+                <span class="pill" style="--c: #a52a2a">DRY BUSHES</span>
+                <span class="pill" style="--c: #808080">ROCKS</span>
+                <span class="pill" style="--c: #87ceeb">SKY</span>
             </div>
         </footer>
     </div>
-
     <script src="/static/script.js"></script>
 </body>
 </html>
