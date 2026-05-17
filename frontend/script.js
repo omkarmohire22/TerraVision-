@@ -1,5 +1,5 @@
 // Define the backend API URL. For local development use '', for production use your deployed backend URL.
-const API_BASE_URL = ''; // e.g., 'https://terravision-backend.onrender.com'
+const API_BASE_URL = 'https://terravision-v9h8.onrender.com'; // e.g., 'https://terravision-backend.onrender.com'
 
 document.addEventListener('DOMContentLoaded', () => {
     const fileElem = document.getElementById('fileElem');
