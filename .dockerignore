@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+.git/
+dataset/
+runs/
+predictions/
